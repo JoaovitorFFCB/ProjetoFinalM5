@@ -3,6 +3,7 @@ const Professores = require('../models/Professores')
 
 const bcrypt = require('bcryptjs')
 const Tarefas = require('../models/Tarefas')
+const TarefasAlunos = require('../models/TarefasAlunos')
 
 module.exports = class AuthController {
 
@@ -141,20 +142,36 @@ module.exports = class AuthController {
             senha: hashedPassword,
         }
 
-        const buscarTarefas = await Tarefas.findOne({
+        /*const buscarTarefas = await Tarefas.findOne({
             where: {
                 serie: serie
             }
-        })
+        })*/
+
+        const tamanho = await Tarefas.findAndCountAll()
+        let num = tamanho.count
 
         try {
             const createdUser = await Alunos.create(user)
 
-            if (buscarTarefas != 0) {
-                const buscarAluno = await Alunos.findByPk(createdUser.id)
-                
-                await buscarAluno.setTarefas([buscarTarefas])
-                
+            if (num != 0) {
+                for (let i = 1; i <= num; i++) {
+                    const buscarAluno = await Alunos.findByPk(createdUser.id)
+                    
+                    let buscarTarefa = await Tarefas.findOne({
+                        where: {
+                            id: i
+                        }
+                    })
+                    if (buscarTarefa.serie === buscarAluno.serie) {
+                        let addTarefas = await TarefasAlunos.create({
+                            AlunoId: buscarAluno.id,
+                            TarefaId: buscarTarefa.id
+                        })
+                        console.log(addTarefas);
+                    }
+
+                }
             }
 
             // initialize session

@@ -175,7 +175,7 @@ module.exports = class Controller {
         if (!aluno) {
             res.redirect('/login')
         }
-
+           
         const tarefas = aluno.Tarefas.map((result) => result.dataValues)
         console.log(tarefas);
        

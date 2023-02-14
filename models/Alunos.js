@@ -35,4 +35,6 @@ const Alunos = db.define('Alunos', {
     },
 })
 
+
+
 module.exports = Alunos
